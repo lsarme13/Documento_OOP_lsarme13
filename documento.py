@@ -33,6 +33,11 @@ class Documento:
         with open(self.filename, 'w') as arquivo:
             arquivo.write(''.join(self.caracteres))
 
+    @property
+    def string(self):
+        ''' Retorna o texto atual inteiro. '''
+        return ''.join(self.caracteres)
+
 
 class Cursor:
     ''' Modela o cursor do Documento, acrescentando métodos para avançar ou
