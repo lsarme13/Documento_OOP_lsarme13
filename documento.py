@@ -10,22 +10,22 @@ class Documento:
         instanciado. """
     def __init__(self):
         self.caracteres = []
-        self.cursor = 0
+        self.cursor = Cursor(self)
         self.nome = ''
 
     def inserir(self, caractere):
         ''' Adiciona um novo caractere, fornecido pelo usuário, 
             à lista self.caracteres, movimentando o cursor. '''
-        self.caracteres.insert(self.cursor, caractere)
-        self.avancar()
+        self.caracteres.insert(self.cursor.posicao, caractere)
+        self.cursor.avancar()
 
     def deletar(self):
         ''' Remove o caractere na posição atual do cursor. '''
-        del self.caracteres[self.cursor]
+        del self.caracteres[self.cursor.posicao]
 
     def apagar(self):
-        ''' Apaga o caraactere da posição anterior (backspace). '''
-        self.voltar()
+        ''' Apaga o caractere da posição anterior (backspace). '''
+        self.cursor.voltar()
         self.deletar()
     
     def salvar(self):
@@ -33,10 +33,33 @@ class Documento:
         with open(self.filename, 'w') as arquivo:
             arquivo.write(''.join(self.caracteres))
 
+
+class Cursor:
+    ''' Modela o cursor do Documento, acrescentando métodos para avançar ou
+        recuar, bem como permitindo retornar ao início do documento (Home) e
+        avnçar ao final dele (End).'''
+    def __init__(self, documento):
+        self.documento = documento
+        self.posicao = 0
+
     def avancar(self):
-        ''' Avança o cursor uma posição à frente. '''
-        self.cursor += 1
+        ''' Move-se uma posição à frente. '''
+        self.posicao += 1
 
     def voltar(self):
-        ''' Retorna o cursor uma posição atrás. '''
-        self.cursor -= 1
+        ''' Recua uma posição. '''
+        self.posicao -= 1
+
+    def home(self):
+        ''' Retorna diretamente ao início da linha. '''
+        while self.documento.caracteres[self.posicao] != '\n':
+            self.posicao -= 1
+            if self.posicao == 0: # Chegou ao início do documento
+                break
+
+    def end(self):
+        ''' Avança diretamente ao final da linha. '''
+        while self.posicao < len(self.documento.caracteres) and self.documento.caracteres[
+            self.posicao] != '\n':
+            self.posicao += 1
+
